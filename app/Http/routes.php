@@ -16,3 +16,12 @@ Route::get('/', ['uses' => 'UserController@index', 'as' => 'home']);
 Route::resource('user', 'UserController');
 Route::resource('product', 'ProductController');
 
+Route::get('images/{type}/{id}/{image_name}', function($type=null,$id=null,$image_name = null) {
+    $path = storage_path() . '/public/images/' . $type . '/' . $id . '/' . $image_name;
+    if (file_exists($path)) {
+        return Response::download($path);
+    }
+});
+
+Route::resource('load/image/{type}/{id}', 'ImageController');
+
