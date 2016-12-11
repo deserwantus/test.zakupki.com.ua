@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Product;
+use App\Images;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
-class ProductController extends Controller
+class ImageController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * From for load images.
      *
+     * @param  string  $type
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index($type, $id)
     {
-        $pageTitle = 'Products |';
-        return view('pages.product.index', [
-            'products' => Product::getProductsWithImages(),
-            'pageTitle' => $pageTitle
+        return view('pages.image.index', [
+            'type' => $type,
+            'id' => $id
         ]);
     }
 
@@ -43,17 +44,21 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'name' => 'required|max:255',
+            'image' => 'required|mimes:jpeg',
+        ]);
+
+        Images::upload($request);
+
+        return Redirect::to($request->get('type'));
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
+     * @param $id int
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id){
         //
     }
 

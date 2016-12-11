@@ -36,4 +36,28 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['password', 'remember_token'];
+
+    public function images()
+    {
+        return $this->belongsTo('App\Images');
+    }
+
+    /**
+     * Get the list of users with images
+     */
+    public static function getUsersWithImages(){
+        return self::query()
+            ->leftjoin('images', function ($join) {
+                $join->on('images.subject_id', '=', 'users.id')->where('images.type', '=', 'user');
+            })
+            ->selectRaw(implode(',',[
+                'users.*',
+                'images.subject_id',
+                'images.type',
+                'group_concat(images.name) as image_name',
+            ]))
+            ->groupBy('users.id')
+            ->orderBy('users.id')
+            ->get();
+    }
 }
